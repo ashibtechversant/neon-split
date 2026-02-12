@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import DiffSummary from './DiffSummary';
 import DiffViewer from './DiffViewer';
 import TextDiffViewer from './TextDiffViewer';
-import { formatPath, safeValueString } from '../utils/diffLogic';
+import { formatPath, safeValueString } from '../../../../utils/diffLogic';
 
 export default function DiffResults({
   rows,
@@ -11,9 +11,8 @@ export default function DiffResults({
   rightJson,
   ignoreArrayOrder,
 }) {
-  // We need leftJson and rightJson props passed down from App
-  const [view, setView] = useState('split'); // Default to split since user requested it
-  const [hideUnchanged, setHideUnchanged] = useState(false); // Text diff usually shows context
+  const [view, setView] = useState('split');
+  const [hideUnchanged, setHideUnchanged] = useState(false);
   const [filterTypes, setFilterTypes] = useState([
     'added',
     'removed',

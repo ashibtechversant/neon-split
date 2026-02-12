@@ -52,7 +52,7 @@
 }
 
 .history-item {
-  background: rgba(255, 255, 255, 0.05); /* Slightly brighter */
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0.8rem;
@@ -60,7 +60,7 @@
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
-  flex-shrink: 0; /* Prevent squashing on small screens/long lists */
+  flex-shrink: 0;
 }
 
 .history-item:hover {
@@ -77,7 +77,7 @@
     rgba(255, 214, 61, 0.12) 0%,
     rgba(255, 214, 61, 0.04) 100%
   );
-  box-shadow: 0 0 15px rgba(255, 214, 61, 0.08); /* Outer glow on container */
+  box-shadow: 0 0 15px rgba(255, 214, 61, 0.08);
 }
 
 .history-item.active::before {
@@ -89,18 +89,6 @@
   width: 4px;
   background: var(--c-changed);
   box-shadow: 0 0 8px var(--c-changed);
-}
-
-/* Removed indentation for child logs to prevent layout shift */
-.history-item.child-log {
-  /* margin-left: 1.5rem; <--- Removed */
-  position: relative;
-  /* border-left-color: rgba(255, 255, 255, 0.15); */
-}
-
-/* Removed tree connector for child logs */
-.history-item.child-log::after {
-  display: none;
 }
 
 .history-meta {
@@ -117,7 +105,7 @@
   font-family: 'JetBrains Mono', monospace;
   opacity: 1;
   font-size: 0.65rem;
-  background: rgba(255, 235, 59, 0.15); /* Subtle gold tint */
+  background: rgba(255, 235, 59, 0.15);
   color: #ffeb3b;
   padding: 0.2rem 0.5rem;
   border-radius: 99px;
@@ -129,7 +117,7 @@
   margin-bottom: 0.7rem;
   font-size: 0.72rem;
   color: var(--text-muted);
-  background: rgba(0, 0, 0, 0.4); /* Darker background for contrast with code */
+  background: rgba(0, 0, 0, 0.4);
   padding: 0.6rem;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -164,8 +152,8 @@
   font-family: 'JetBrains Mono', monospace;
   overflow: hidden;
   text-overflow: ellipsis;
-  opacity: 1; /* Make sure it's fully opaque */
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); /* Better legibility */
+  opacity: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .history-stats {
@@ -296,7 +284,6 @@
   color: var(--text-muted);
   cursor: pointer;
   padding: 0;
-  line-height: 1;
   transition: all 0.2s ease;
   opacity: 0.5;
 }
@@ -329,9 +316,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  background: rgba(var(--c-changed-rgb, 255, 214, 61), 0.1);
+  background: rgba(255, 214, 61, 0.1);
   color: var(--c-changed);
-  border: 1px solid rgba(var(--c-changed-rgb, 255, 214, 61), 0.2);
+  border: 1px solid rgba(255, 214, 61, 0.2);
   padding: 0.15rem 0.4rem;
   border-radius: 4px;
   font-size: 0.65rem;
@@ -346,7 +333,6 @@
   padding: 0;
   cursor: pointer;
   opacity: 0.6;
-  line-height: 1;
 }
 
 .tag-remove:hover {
@@ -397,9 +383,8 @@
   height: 24px;
   cursor: pointer;
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
+  align-items: center;
 }
 
 .tag-save-btn {

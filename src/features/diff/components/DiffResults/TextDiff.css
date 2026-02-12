@@ -17,7 +17,7 @@
 .text-diff-table td {
   padding: 0 4px;
   vertical-align: top;
-  border: none; /* Reset existing table border */
+  border: none;
 }
 
 /* Line Numbers */
@@ -37,7 +37,7 @@
   word-break: break-all;
   color: #c9d1d9;
   position: relative;
-  padding-left: 20px !important; /* Space for marker */
+  padding-left: 20px !important;
 }
 
 .line-marker {
@@ -70,7 +70,7 @@
 /* Empty cells in split view */
 .line-code.empty,
 .line-num.empty {
-  background: rgba(0, 0, 0, 0.15); /* Slightly darker for empty space */
+  background: rgba(0, 0, 0, 0.15);
 }
 
 .split-view td {

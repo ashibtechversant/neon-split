@@ -1,0 +1,126 @@
+:root {
+  --bg-0: #090411;
+  --bg-1: #120624;
+  --bg-2: #21103d;
+  --text-main: #efe8ff;
+  --text-muted: #bfaddd;
+  --c-added: #00f7b4;
+  --c-removed: #ff3864;
+  --c-changed: #ffd63d;
+  --c-unchanged: #7ea0ff;
+  --border: rgba(255, 255, 255, 0.22);
+  --glass: rgba(18, 7, 34, 0.72);
+  --shadow-xl: 0 28px 80px rgba(2, 0, 9, 0.55);
+  --grad-neon: linear-gradient(
+    110deg,
+    #00f7b4 0%,
+    #40b4ff 35%,
+    #ff4ecf 70%,
+    #ffd63d 100%
+  );
+}
+
+* {
+  box-sizing: border-box;
+}
+
+pre,
+code {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+body {
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  min-height: 100vh;
+  color: var(--text-main);
+  background:
+    radial-gradient(circle at 15% 10%, var(--bg-2), transparent 48%),
+    radial-gradient(circle at 85% 25%, #1f0a38, transparent 40%),
+    linear-gradient(160deg, var(--bg-0) 0%, #05030a 60%, var(--bg-1) 100%);
+  overflow-x: hidden;
+}
+
+.bg-mesh,
+.bg-grid,
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.bg-mesh {
+  background:
+    radial-gradient(circle at 8% 35%, rgba(0, 247, 180, 0.2), transparent 32%),
+    radial-gradient(
+      circle at 82% 12%,
+      rgba(255, 78, 207, 0.25),
+      transparent 33%
+    ),
+    radial-gradient(
+      circle at 62% 84%,
+      rgba(64, 180, 255, 0.18),
+      transparent 30%
+    );
+  filter: saturate(1.4);
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 36px 36px;
+  opacity: 0.2;
+  transform: perspective(700px) rotateX(68deg) translateY(28%);
+  transform-origin: center bottom;
+}
+
+.noise-overlay {
+  opacity: 0.13;
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.6) 1px,
+    transparent 1px
+  );
+  background-size: 3px 3px;
+  mix-blend-mode: soft-light;
+}
+
+.shell {
+  position: relative;
+  z-index: 1;
+  width: min(1280px, calc(100% - 48px));
+  margin: 2rem auto 3rem;
+  display: grid;
+  gap: 1.4rem;
+}
+
+/* Base animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: reveal-up 0.75s cubic-bezier(0.2, 0.62, 0.2, 1) forwards;
+}
+
+@keyframes reveal-up {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal-1 {
+  animation-delay: 0.1s;
+}
+.reveal-2 {
+  animation-delay: 0.2s;
+}
+.reveal-3 {
+  animation-delay: 0.3s;
+}
+.reveal-4 {
+  animation-delay: 0.4s;
+}
+.reveal-5 {
+  animation-delay: 0.5s;
+}
