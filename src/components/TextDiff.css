@@ -1,0 +1,78 @@
+/* Text Diff Styles */
+.text-diff-container {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  background: #0d1117;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.text-diff-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.text-diff-table td {
+  padding: 0 4px;
+  vertical-align: top;
+  border: none; /* Reset existing table border */
+}
+
+/* Line Numbers */
+.line-num {
+  text-align: right;
+  color: #6e7681;
+  user-select: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: transparent;
+  width: 1%;
+  white-space: nowrap;
+  padding-right: 8px !important;
+}
+
+.line-code {
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: #c9d1d9;
+  position: relative;
+  padding-left: 20px !important; /* Space for marker */
+}
+
+.line-marker {
+  position: absolute;
+  left: 4px;
+  color: inherit;
+  opacity: 0.6;
+  user-select: none;
+}
+
+/* Row types */
+.diff-line.added,
+.line-code.added,
+.line-num.added {
+  background: rgba(46, 160, 67, 0.15) !important;
+}
+
+.diff-line.removed,
+.line-code.removed,
+.line-num.removed {
+  background: rgba(248, 81, 73, 0.15) !important;
+}
+
+.diff-line.unchanged,
+.line-code.unchanged,
+.line-num.unchanged {
+  background: transparent;
+}
+
+/* Empty cells in split view */
+.line-code.empty,
+.line-num.empty {
+  background: rgba(0, 0, 0, 0.15); /* Slightly darker for empty space */
+}
+
+.split-view td {
+  border-bottom: none !important;
+}
