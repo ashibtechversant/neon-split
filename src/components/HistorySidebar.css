@@ -1,0 +1,413 @@
+.history-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(380px, 100vw);
+  background: rgba(10, 4, 21, 0.95);
+  backdrop-filter: blur(16px);
+  border-left: 1px solid var(--border);
+  z-index: 100;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-xl);
+}
+
+.history-sidebar.open {
+  transform: translateX(0);
+}
+
+.history-header {
+  padding: 1.2rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-header h2 {
+  font-size: 1rem;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.2rem;
+}
+
+.history-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.history-item {
+  background: rgba(255, 255, 255, 0.05); /* Slightly brighter */
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0; /* Prevent squashing on small screens/long lists */
+}
+
+.history-item:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: var(--c-unchanged);
+  transform: translateX(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.history-item.active {
+  border-color: var(--c-changed);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 214, 61, 0.12) 0%,
+    rgba(255, 214, 61, 0.04) 100%
+  );
+  box-shadow: 0 0 15px rgba(255, 214, 61, 0.08); /* Outer glow on container */
+}
+
+.history-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--c-changed);
+  box-shadow: 0 0 8px var(--c-changed);
+}
+
+/* Removed indentation for child logs to prevent layout shift */
+.history-item.child-log {
+  /* margin-left: 1.5rem; <--- Removed */
+  position: relative;
+  /* border-left-color: rgba(255, 255, 255, 0.15); */
+}
+
+/* Removed tree connector for child logs */
+.history-item.child-log::after {
+  display: none;
+}
+
+.history-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 0.7rem;
+}
+
+.history-id {
+  font-family: 'JetBrains Mono', monospace;
+  opacity: 1;
+  font-size: 0.65rem;
+  background: rgba(255, 235, 59, 0.15); /* Subtle gold tint */
+  color: #ffeb3b;
+  padding: 0.2rem 0.5rem;
+  border-radius: 99px;
+  letter-spacing: 0.02em;
+  border: 1px solid rgba(255, 235, 59, 0.2);
+}
+
+.history-preview {
+  margin-bottom: 0.7rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: rgba(0, 0, 0, 0.4); /* Darker background for contrast with code */
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.preview-line {
+  display: flex;
+  gap: 0.6rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-bottom: 0.3rem;
+  align-items: baseline;
+}
+
+.preview-line:last-child {
+  margin-bottom: 0;
+}
+
+.preview-line .label {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 12px;
+  opacity: 0.8;
+}
+
+.preview-line .code {
+  color: var(--text-main);
+  font-family: 'JetBrains Mono', monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 1; /* Make sure it's fully opaque */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); /* Better legibility */
+}
+
+.history-stats {
+  display: flex;
+  gap: 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding-top: 0.1rem;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.stat.added {
+  color: var(--c-added);
+}
+.stat.removed {
+  color: var(--c-removed);
+}
+.stat.changed {
+  color: var(--c-changed);
+}
+
+.history-note {
+  margin-top: 0.5rem;
+  font-size: 0.65rem;
+  color: #a0a0a0;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-style: normal;
+  border-left: 2px solid var(--c-unchanged);
+}
+
+.history-note::before {
+  content: '↪';
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.history-empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 2rem 1rem;
+  opacity: 0.6;
+}
+
+.history-actions {
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.btn-clear-history {
+  width: 100%;
+  padding: 0.6rem;
+  font-size: 0.8rem;
+  color: var(--c-removed);
+  border-color: rgba(255, 56, 100, 0.3);
+}
+
+.btn-clear-history:hover {
+  background: rgba(255, 56, 100, 0.1);
+}
+
+.history-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 90;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.history-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.history-search-container {
+  padding: 0.8rem 1rem 0 1rem;
+}
+
+.history-search-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.history-search-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--c-changed);
+  box-shadow: 0 0 0 2px rgba(255, 214, 61, 0.1);
+}
+
+.history-search-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* Star & Tags UI */
+.history-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.btn-star {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: all 0.2s ease;
+  opacity: 0.5;
+}
+
+.btn-star:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.btn-star.starred {
+  color: #ffca28;
+  opacity: 1;
+  text-shadow: 0 0 10px rgba(255, 202, 40, 0.4);
+}
+
+.history-tags-section {
+  margin-top: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.history-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.history-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(var(--c-changed-rgb, 255, 214, 61), 0.1);
+  color: var(--c-changed);
+  border: 1px solid rgba(var(--c-changed-rgb, 255, 214, 61), 0.2);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 500;
+}
+
+.tag-remove {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 0.9rem;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0.6;
+  line-height: 1;
+}
+
+.tag-remove:hover {
+  opacity: 1;
+}
+
+.btn-add-tag {
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  width: fit-content;
+  transition: all 0.2s ease;
+}
+
+.btn-add-tag:hover {
+  border-color: var(--c-changed);
+  color: var(--c-changed);
+  background: rgba(255, 214, 61, 0.05);
+}
+
+.tag-input-wrapper {
+  display: flex;
+  gap: 0.2rem;
+  align-items: center;
+}
+
+.tag-input {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--c-changed);
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  color: var(--text-main);
+  font-size: 0.7rem;
+  width: 100px;
+}
+
+.tag-save-btn,
+.tag-cancel-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+}
+
+.tag-save-btn {
+  border-color: var(--c-added);
+  color: var(--c-added);
+}
+
+.tag-cancel-btn {
+  border-color: var(--c-removed);
+  color: var(--c-removed);
+}

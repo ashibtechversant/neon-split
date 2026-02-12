@@ -7,6 +7,7 @@ export default function DiffControls({
   onClear,
   ignoreArrayOrder,
   setIgnoreArrayOrder,
+  onToggleHistory,
 }) {
   return (
     <section className='controls reveal reveal-3'>
@@ -21,6 +22,9 @@ export default function DiffControls({
       </button>
       <button onClick={onClear} className='btn-ghost'>
         Clear
+      </button>
+      <button onClick={onToggleHistory} className='btn-ghost'>
+        History
       </button>
       <label className='toggle-wrap' htmlFor='ignore-array-order'>
         <input

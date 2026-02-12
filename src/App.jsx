@@ -9,6 +9,8 @@ import {
   SAMPLE_A,
   SAMPLE_B,
 } from './utils/diffLogic';
+import HistorySidebar from './components/HistorySidebar';
+import { generateName } from './utils/nameGenerator';
 
 function App() {
   const [leftJson, setLeftJson] = useState('');
@@ -26,9 +28,24 @@ function App() {
     tone: 'neutral',
   });
   const [ignoreArrayOrder, setIgnoreArrayOrder] = useState(false);
+  const [history, setHistory] = useState(() => {
+    const saved = localStorage.getItem('neon-split-history');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
+  const [currentHistoryId, setCurrentHistoryId] = useState(null);
+
+  useEffect(() => {
+    localStorage.setItem('neon-split-history', JSON.stringify(history));
+  }, [history]);
 
   // Move handleCompare before useEffect
-  const handleCompare = (leftInput = leftJson, rightInput = rightJson) => {
+  const handleCompare = (
+    leftInput = leftJson,
+    rightInput = rightJson,
+    parentId = null,
+  ) => {
     const left = parseJson(leftInput, 'JSON A');
     const right = parseJson(rightInput, 'JSON B');
 
@@ -50,6 +67,92 @@ function App() {
       message: `Comparison complete: ${newTotals.changed} changed, ${newTotals.added} added, ${newTotals.removed} removed.`,
       tone: 'success',
     });
+
+    // Add to history
+    if (newTotals.total > 0 || (leftInput && rightInput)) {
+      setHistory((prev) => {
+        // Check for exact duplicate in entire history to mark connection
+        const exactMatch = prev.find(
+          (h) => h.leftJson === leftInput && h.rightJson === rightInput,
+        );
+
+        if (exactMatch) {
+          // If perfectly identical to an existing one, just switch to it
+          setCurrentHistoryId(exactMatch.id);
+          setStatus({
+            message: `Identical to existing log @${exactMatch.id}. Switched view.`,
+            tone: 'neutral',
+          });
+          return prev;
+        }
+
+        // Generate unique name
+        let newId = generateName();
+        // Ensure uniqueness (simple collision check)
+        while (prev.some((h) => h.id === newId)) {
+          newId = generateName();
+        }
+
+        const newEntry = {
+          id: newId,
+          parentId: parentId || currentHistoryId,
+          timestamp: Date.now(),
+          leftJson: leftInput,
+          rightJson: rightInput,
+          totals: newTotals,
+          note:
+            parentId || currentHistoryId
+              ? `Derived from ${parentId || currentHistoryId}`
+              : null,
+        };
+
+        setCurrentHistoryId(newId);
+        return [newEntry, ...prev].slice(0, 50); // Keep last 50
+      });
+    }
+  };
+
+  const handleRestoreHistory = (item) => {
+    setLeftJson(item.leftJson);
+    setRightJson(item.rightJson);
+    // Directly set current ID to the restored item
+    setCurrentHistoryId(item.id);
+
+    // Run comparison without saving
+    const left = parseJson(item.leftJson, 'JSON A');
+    const right = parseJson(item.rightJson, 'JSON B');
+    const rows = [];
+    const opts = { compareArraysByValue: ignoreArrayOrder };
+    compareValues(left.value, right.value, '$', rows, opts);
+    setDiffRows(rows);
+    setTotals(summarize(rows));
+    setStatus({
+      message: `Restored comparison from history.`,
+      tone: 'neutral',
+    });
+
+    setIsHistoryOpen(false);
+  };
+
+  const handleClearHistory = () => {
+    if (window.confirm('Clear all history?')) {
+      setHistory([]);
+      setCurrentHistoryId(null);
+    }
+  };
+
+  const handleToggleStar = (id) => {
+    setHistory((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, isStarred: !item.isStarred } : item,
+      ),
+    );
+  };
+
+  const handleUpdateTags = (id, newTags) => {
+    setHistory((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, tags: newTags } : item)),
+    );
   };
 
   // Initialize with samples
@@ -142,6 +245,7 @@ function App() {
         onClear={handleClear}
         ignoreArrayOrder={ignoreArrayOrder}
         setIgnoreArrayOrder={setIgnoreArrayOrder}
+        onToggleHistory={() => setIsHistoryOpen(true)}
       />
 
       <section
@@ -163,6 +267,17 @@ function App() {
         leftJson={leftJson}
         rightJson={rightJson}
         ignoreArrayOrder={ignoreArrayOrder}
+      />
+
+      <HistorySidebar
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        history={history}
+        onRestore={handleRestoreHistory}
+        onClear={handleClearHistory}
+        currentId={currentHistoryId}
+        onToggleStar={handleToggleStar}
+        onUpdateTags={handleUpdateTags}
       />
     </div>
   );
