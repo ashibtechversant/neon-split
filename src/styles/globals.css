@@ -764,22 +764,68 @@ h2 {
   font-size: 0.7rem;
   text-transform: lowercase;
   letter-spacing: 0.08em;
-  transition: all 0.2s cubic-bezier(0.2, 0.62, 0.2, 1);
-  opacity: 0.4;
-  border-color: rgba(255, 255, 255, 0.15);
-  transform: scale(0.95);
+  transition: all 0.2s ease;
+  opacity: 0.5;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .filter-chip.active {
   opacity: 1;
-  transform: scale(1);
-  border-color: currentColor;
-  box-shadow: 0 0 15px currentColor;
 }
 
-.filter-chip:hover {
-  opacity: 0.8;
-  transform: scale(0.98);
+/* Simplified Mobile Style (Default) */
+.filter-chip.added.active {
+  color: var(--c-added);
+  border-color: var(--c-added);
+  background: rgba(0, 247, 180, 0.1);
+}
+.filter-chip.removed.active {
+  color: var(--c-removed);
+  border-color: var(--c-removed);
+  background: rgba(255, 42, 93, 0.1);
+}
+.filter-chip.changed.active {
+  color: var(--c-changed);
+  border-color: var(--c-changed);
+  background: rgba(255, 214, 61, 0.1);
+}
+.filter-chip.unchanged.active {
+  color: var(--c-unchanged);
+  border-color: var(--c-unchanged);
+  background: rgba(79, 138, 255, 0.1);
+}
+
+/* Premium Desktop Style (Neon Glows & Scaling) */
+@media (min-width: 1024px) {
+  .filter-chip {
+    transform: scale(0.95);
+    opacity: 0.4;
+  }
+
+  .filter-chip.active {
+    transform: scale(1);
+    border-width: 1.5px;
+  }
+
+  .filter-chip.added.active {
+    box-shadow: 0 0 15px rgba(0, 247, 180, 0.4);
+  }
+  .filter-chip.removed.active {
+    box-shadow: 0 0 15px rgba(255, 42, 93, 0.4);
+  }
+  .filter-chip.changed.active {
+    box-shadow: 0 0 15px rgba(255, 214, 61, 0.4);
+  }
+  .filter-chip.unchanged.active {
+    box-shadow: 0 0 15px rgba(79, 138, 255, 0.4);
+  }
+
+  .filter-chip:hover {
+    opacity: 0.9;
+    transform: scale(0.98);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
 }
 
 .tab-btn.active {

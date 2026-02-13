@@ -16,6 +16,7 @@ export default function DiffResults({
     'added',
     'removed',
     'changed',
+    'unchanged',
   ]);
   const [searchQuery, setSearchQuery] = useState('');
 
