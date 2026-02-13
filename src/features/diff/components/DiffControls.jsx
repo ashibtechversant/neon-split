@@ -1,4 +1,4 @@
-import React from 'react';
+import { Cpu, Shuffle, FileJson, Trash2, Clock } from 'lucide-react';
 
 export default function DiffControls({
   onCompare,
@@ -11,20 +11,45 @@ export default function DiffControls({
 }) {
   return (
     <section className='controls reveal reveal-3'>
-      <button onClick={onCompare} className='btn-main'>
-        Compute Difference
+      <button
+        onClick={onCompare}
+        className='btn-main'
+        style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+      >
+        <Cpu size={14} />
+        <span>Compute Difference</span>
       </button>
-      <button onClick={onSwap} className='btn-ghost'>
-        Swap Inputs
+      <button
+        onClick={onSwap}
+        className='btn-ghost'
+        style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+      >
+        <Shuffle size={14} />
+        <span>Swap Inputs</span>
       </button>
-      <button onClick={onLoadSample} className='btn-ghost'>
-        Load Example
+      <button
+        onClick={onLoadSample}
+        className='btn-ghost'
+        style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+      >
+        <FileJson size={14} />
+        <span>Load Example</span>
       </button>
-      <button onClick={onClear} className='btn-ghost'>
-        Clear
+      <button
+        onClick={onClear}
+        className='btn-ghost'
+        style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+      >
+        <Trash2 size={14} />
+        <span>Clear</span>
       </button>
-      <button onClick={onToggleHistory} className='btn-ghost'>
-        History
+      <button
+        onClick={onToggleHistory}
+        className='btn-ghost'
+        style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+      >
+        <Clock size={14} />
+        <span>History</span>
       </button>
       <label className='toggle-wrap' htmlFor='ignore-array-order'>
         <input

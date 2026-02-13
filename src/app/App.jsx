@@ -3,6 +3,8 @@ import { DiffLayout } from '../features/diff';
 import { JsonViewerLayout } from '../features/json-viewer';
 import '../styles/globals.css';
 
+import { Split, FileCode } from 'lucide-react';
+
 function App() {
   const [view, setView] = React.useState(() => {
     try {
@@ -11,6 +13,18 @@ function App() {
       return 'diff';
     }
   });
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      const x = (e.clientX / window.innerWidth) * 100;
+      const y = (e.clientY / window.innerHeight) * 100;
+      document.documentElement.style.setProperty('--mouse-x', `${x}%`);
+      document.documentElement.style.setProperty('--mouse-y', `${y}%`);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   useEffect(() => {
     try {
@@ -27,8 +41,12 @@ function App() {
       <div className='noise-overlay'></div>
 
       <header className='hero reveal reveal-1'>
-        <p className='eyebrow'>RETRO FUTURIST / MAXIMAL MODE</p>
-        <h1>NEON SPLIT</h1>
+        <p className='eyebrow'>made with love :)</p>
+        <h1>
+          <span className='glitch-text' data-text='NEON SPLIT'>
+            NEON SPLIT
+          </span>
+        </h1>
         <div
           className='view-tabs'
           style={{
@@ -41,14 +59,18 @@ function App() {
           <button
             onClick={() => setView('diff')}
             className={view === 'diff' ? 'btn-main' : 'btn-ghost'}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
           >
-            DIFF TOOL
+            <Split size={18} strokeWidth={2.5} />
+            <span>DIFF TOOL</span>
           </button>
           <button
             onClick={() => setView('explorer')}
             className={view === 'explorer' ? 'btn-main' : 'btn-ghost'}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
           >
-            JSON EXPLORER
+            <FileCode size={18} strokeWidth={2.5} />
+            <span>JSON EXPLORER</span>
           </button>
         </div>
         <p></p>

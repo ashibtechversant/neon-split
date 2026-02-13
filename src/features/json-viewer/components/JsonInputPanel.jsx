@@ -1,4 +1,4 @@
-import React from 'react';
+import { FileText } from 'lucide-react';
 
 export default function JsonInputPanel({
   value,
@@ -23,7 +23,10 @@ export default function JsonInputPanel({
         gridTemplateRows: 'auto 1fr',
       }}
     >
-      <label>SOURCE JSON</label>
+      <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <FileText size={14} />
+        <span>SOURCE JSON</span>
+      </label>
       {dragActive && (
         <div className='json-drop-zone'>
           <p>Drop JSON file here</p>

@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { X, Star, Search, Plus, Trash2, Save, Check } from 'lucide-react';
 import '../styles/HistorySidebar.css';
 
 export default function HistorySidebar({
@@ -85,17 +86,32 @@ export default function HistorySidebar({
         <div className='history-header'>
           <h2>{headerTitle}</h2>
           <button className='close-btn' onClick={onClose}>
-            &times;
+            <X size={20} />
           </button>
         </div>
 
-        <div className='history-search-container'>
+        <div
+          className='history-search-container'
+          style={{ position: 'relative' }}
+        >
+          <Search
+            size={14}
+            style={{
+              position: 'absolute',
+              left: '24px',
+              top: '58%',
+              transform: 'translateY(-50%)',
+              color: 'var(--text-muted)',
+              opacity: 0.5,
+            }}
+          />
           <input
             type='text'
-            placeholder='Search history (@tag, content)...'
+            placeholder='Search history...'
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className='history-search-input'
+            style={{ paddingLeft: '2.4rem' }}
             autoFocus
           />
         </div>
@@ -126,11 +142,11 @@ export default function HistorySidebar({
                         e.stopPropagation();
                         onToggleStar(item.id);
                       }}
-                      title={
-                        item.isStarred ? 'Unstar comparison' : 'Star comparison'
-                      }
                     >
-                      {item.isStarred ? '★' : '☆'}
+                      <Star
+                        size={14}
+                        fill={item.isStarred ? 'currentColor' : 'transparent'}
+                      />
                     </button>
                   </div>
 
@@ -185,7 +201,7 @@ export default function HistorySidebar({
                                 handleRemoveTag(e, item.id, item.tags, tag)
                               }
                             >
-                              &times;
+                              <X size={10} />
                             </button>
                           </span>
                         ))}
@@ -218,7 +234,7 @@ export default function HistorySidebar({
                           className='tag-save-btn'
                           onClick={() => handleAddTag(item.id, item.tags || [])}
                         >
-                          +
+                          <Check size={12} />
                         </button>
                         <button
                           className='tag-cancel-btn'
@@ -227,7 +243,7 @@ export default function HistorySidebar({
                             setNewTagInput('');
                           }}
                         >
-                          &times;
+                          <X size={12} />
                         </button>
                       </div>
                     ) : (
@@ -237,8 +253,14 @@ export default function HistorySidebar({
                           e.stopPropagation();
                           setEditingTagsId(item.id);
                         }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                        }}
                       >
-                        + Add Tag
+                        <Plus size={10} />
+                        <span>TAG</span>
                       </button>
                     )}
                   </div>
@@ -252,8 +274,18 @@ export default function HistorySidebar({
 
         {history.length > 0 && (
           <div className='history-actions'>
-            <button className='btn-ghost btn-clear-history' onClick={onClear}>
-              Clear History
+            <button
+              className='btn-ghost btn-clear-history'
+              onClick={onClear}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                justifyContent: 'center',
+              }}
+            >
+              <Trash2 size={14} />
+              <span>CLEAR HISTORY</span>
             </button>
           </div>
         )}

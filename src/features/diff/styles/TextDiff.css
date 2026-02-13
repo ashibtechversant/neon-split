@@ -1,11 +1,12 @@
 /* Text Diff Styles */
 .text-diff-container {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85rem;
-  background: #0d1117;
-  border-radius: 6px;
+  font-family: var(--font-code);
+  font-size: 0.82rem;
+  background: var(--bg-0);
+  border-radius: 12px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.4);
 }
 
 .text-diff-table {
@@ -18,72 +19,72 @@
   padding: 0 4px;
   vertical-align: top;
   border: none;
+  line-height: 1.6;
 }
 
 /* Line Numbers */
 .line-num {
   text-align: right;
-  color: #6e7681;
+  color: var(--text-muted);
   user-select: none;
-  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
-  background: transparent;
+  border-right: 1px solid var(--border) !important;
+  background: rgba(255, 255, 255, 0.02);
   width: 1%;
+  min-width: 45px;
   white-space: nowrap;
-  padding-right: 8px !important;
+  padding-right: 12px !important;
+  font-size: 0.75rem;
+  opacity: 0.6;
 }
 
 .line-code {
   white-space: pre-wrap;
   word-break: break-all;
-  color: #c9d1d9;
+  color: var(--text-main);
   position: relative;
-  padding-left: 20px !important;
+  padding: 2px 20px !important;
 }
 
 .line-marker {
   position: absolute;
-  left: 4px;
+  left: 6px;
   color: inherit;
-  opacity: 0.6;
+  opacity: 0.5;
   user-select: none;
+  font-weight: 800;
 }
 
 /* Row types */
 .diff-line.added,
 .line-code.added,
 .line-num.added {
-  background: rgba(46, 160, 67, 0.15) !important;
+  background: rgba(0, 247, 180, 0.08) !important;
 }
 
 .diff-line.removed,
 .line-code.removed,
 .line-num.removed {
-  background: rgba(248, 81, 73, 0.15) !important;
+  background: rgba(255, 42, 93, 0.08) !important;
 }
 
-.diff-line.unchanged,
-.line-code.unchanged,
-.line-num.unchanged {
-  background: transparent;
+.diff-line.added {
+  border-left: 2px solid var(--c-added);
+}
+.diff-line.removed {
+  border-left: 2px solid var(--c-removed);
 }
 
 /* Empty cells in split view */
 .line-code.empty,
 .line-num.empty {
-  background: rgba(0, 0, 0, 0.15);
-}
-
-.split-view td {
-  border-bottom: none !important;
+  background: rgba(0, 0, 0, 0.2);
 }
 
 /* Search Highlighting */
 .search-highlight {
-  background: rgba(255, 214, 61, 0.3);
+  background: rgba(255, 214, 61, 0.25);
   color: #fff;
-  border-bottom: 2px solid var(--c-changed, #ffd63d);
-  padding: 0 1px;
+  border-bottom: 2px solid var(--c-changed);
+  box-shadow: 0 0 15px rgba(255, 214, 61, 0.2);
   border-radius: 2px;
-  font-weight: 700;
-  text-shadow: 0 0 8px rgba(255, 214, 61, 0.5);
 }

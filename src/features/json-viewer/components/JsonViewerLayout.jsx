@@ -6,6 +6,8 @@ import JsonTreePanel from './JsonTreePanel';
 import JsonToolbar from './JsonToolbar';
 import '../styles/JsonViewer.css';
 
+import { Upload, Zap, Copy, History, Save, Trash2 } from 'lucide-react';
+
 export default function JsonViewerLayout() {
   const {
     history,
@@ -110,7 +112,7 @@ export default function JsonViewerLayout() {
 
       <section
         className='controls reveal reveal-3'
-        style={{ justifyContent: 'center', marginTop: '0.5rem' }}
+        style={{ justifyContent: 'center', marginTop: '1.5rem', gap: '1.2rem' }}
       >
         <input
           type='file'
@@ -123,42 +125,57 @@ export default function JsonViewerLayout() {
           onClick={handleFileClick}
           className='btn-ghost'
           title='Load JSON from file'
+          style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
         >
-          Load File
+          <Upload size={14} />
+          <span>LOAD FILE</span>
         </button>
         <button
           onClick={formatInput}
           className='btn-ghost'
           disabled={!jsonInput}
           title='Format / Extract JSON'
+          style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
         >
-          Format
+          <Zap size={14} />
+          <span>FORMAT</span>
         </button>
         <button
           onClick={handleCopy}
           className='btn-ghost'
           disabled={!parsedData}
           title='Copy Parsed Result'
+          style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
         >
-          Copy Result
+          <Copy size={14} />
+          <span>COPY</span>
         </button>
         <button
           onClick={() => setIsHistoryOpen(true)}
           className='btn-ghost'
           title='View History'
+          style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
         >
-          History
+          <History size={14} />
+          <span>HISTORY</span>
         </button>
         <button
           onClick={handleSaveHistory}
           className='btn-ghost'
           disabled={!parsedData}
           title='Save Snapshot'
+          style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
         >
-          Save
+          <Save size={14} />
+          <span>SAVE</span>
         </button>
-        <button onClick={clear} className='btn-ghost'>
-          Clear
+        <button
+          onClick={clear}
+          className='btn-ghost'
+          style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+        >
+          <Trash2 size={14} />
+          <span>CLEAR</span>
         </button>
       </section>
 

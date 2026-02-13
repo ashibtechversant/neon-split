@@ -1,4 +1,4 @@
-import React from 'react';
+import { Monitor } from 'lucide-react';
 import JsonNode from './JsonNode';
 
 export default function JsonTreePanel({ parsedData, error, jsonInput }) {
@@ -12,7 +12,10 @@ export default function JsonTreePanel({ parsedData, error, jsonInput }) {
         gridTemplateRows: 'auto 1fr',
       }}
     >
-      <label>PARSED RESULT</label>
+      <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <Monitor size={14} />
+        <span>PARSED RESULT</span>
+      </label>
       <div className='json-tree-container'>
         {parsedData ? (
           <JsonNode
