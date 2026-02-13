@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { parseJson, compareValues, summarize } from '../../../utils/diffLogic';
+import { parseJson, compareValues, summarize } from '../utils/diffLogic';
 
 export function useDiff() {
   const [leftJson, setLeftJson] = useState('');

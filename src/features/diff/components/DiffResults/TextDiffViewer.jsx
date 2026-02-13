@@ -1,13 +1,14 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import * as Diff from 'diff';
 import JSON5 from 'json5';
-import './TextDiff.css';
+import '../../styles/TextDiff.css';
 
 const TextDiffViewer = ({
   left,
   right,
   mode = 'split',
   ignoreArrayOrder = false,
+  searchQuery = '',
 }) => {
   const { leftText, rightText } = useMemo(() => {
     const canonicalize = (value) => {
@@ -55,6 +56,24 @@ const TextDiffViewer = ({
     return Diff.diffLines(leftText, rightText);
   }, [leftText, rightText]);
 
+  const highlightMatch = useCallback(
+    (text) => {
+      if (!searchQuery.trim()) return text;
+      const lowerQuery = searchQuery.toLowerCase();
+      const parts = text.split(new RegExp(`(${searchQuery})`, 'gi'));
+      return parts.map((part, i) =>
+        part.toLowerCase() === lowerQuery ? (
+          <mark key={i} className='search-highlight'>
+            {part}
+          </mark>
+        ) : (
+          part
+        ),
+      );
+    },
+    [searchQuery],
+  );
+
   const unifiedRows = useMemo(() => {
     const rows = [];
     let leftLineNum = 1;
@@ -89,8 +108,45 @@ const TextDiffViewer = ({
         }
       });
     });
-    return rows;
-  }, [changes]);
+
+    if (!searchQuery.trim()) return rows;
+
+    const q = searchQuery.toLowerCase();
+    const visible = new Set();
+    rows.forEach((row, i) => {
+      if (row.content.toLowerCase().includes(q)) {
+        visible.add(i);
+        const matchIndent = row.content.search(/\S/);
+        if (matchIndent !== -1) {
+          for (let j = i + 1; j < rows.length; j++) {
+            const rowIndent = rows[j].content.search(/\S/);
+            if (
+              rowIndent > matchIndent ||
+              rows[j].content.trim() === '' ||
+              /^[\s]*[}\]],?$/.test(rows[j].content)
+            ) {
+              visible.add(j);
+              if (
+                rowIndent === matchIndent &&
+                /^[\s]*[}\]],?$/.test(rows[j].content)
+              )
+                break;
+            } else if (rowIndent !== -1) break;
+          }
+          let currentIndent = matchIndent;
+          for (let j = i - 1; j >= 0; j--) {
+            const rowIndent = rows[j].content.search(/\S/);
+            if (rowIndent < currentIndent && rowIndent !== -1) {
+              visible.add(j);
+              currentIndent = rowIndent;
+            }
+          }
+        }
+      }
+    });
+
+    return rows.filter((_, i) => visible.has(i));
+  }, [changes, searchQuery]);
 
   const splitRows = useMemo(() => {
     const rows = [];
@@ -165,8 +221,57 @@ const TextDiffViewer = ({
         i++;
       }
     }
-    return rows;
-  }, [changes]);
+
+    if (!searchQuery.trim()) return rows;
+
+    const q = searchQuery.toLowerCase();
+    const visible = new Set();
+    rows.forEach((row, i) => {
+      const leftContent = row.left ? row.left.content : '';
+      const rightContent = row.right ? row.right.content : '';
+      if (
+        leftContent.toLowerCase().includes(q) ||
+        rightContent.toLowerCase().includes(q)
+      ) {
+        visible.add(i);
+        const matchContent = leftContent || rightContent;
+        const matchIndent = matchContent.search(/\S/);
+        if (matchIndent !== -1) {
+          for (let j = i + 1; j < rows.length; j++) {
+            const rowContent =
+              (rows[j].left ? rows[j].left.content : '') ||
+              (rows[j].right ? rows[j].right.content : '');
+            const rowIndent = rowContent.search(/\S/);
+            if (
+              rowIndent > matchIndent ||
+              rowContent.trim() === '' ||
+              /^[\s]*[}\]],?$/.test(rowContent)
+            ) {
+              visible.add(j);
+              if (
+                rowIndent === matchIndent &&
+                /^[\s]*[}\]],?$/.test(rowContent)
+              )
+                break;
+            } else if (rowIndent !== -1) break;
+          }
+          let currentIndent = matchIndent;
+          for (let j = i - 1; j >= 0; j--) {
+            const rowContent =
+              (rows[j].left ? rows[j].left.content : '') ||
+              (rows[j].right ? rows[j].right.content : '');
+            const rowIndent = rowContent.search(/\S/);
+            if (rowIndent < currentIndent && rowIndent !== -1) {
+              visible.add(j);
+              currentIndent = rowIndent;
+            }
+          }
+        }
+      }
+    });
+
+    return rows.filter((_, i) => visible.has(i));
+  }, [changes, searchQuery]);
 
   if (mode === 'unified') {
     return (
@@ -190,7 +295,7 @@ const TextDiffViewer = ({
                         ? '-'
                         : ' '}
                   </span>
-                  {row.content}
+                  {highlightMatch(row.content)}
                 </td>
               </tr>
             ))}
@@ -221,7 +326,7 @@ const TextDiffViewer = ({
                     <span className='line-marker'>
                       {row.left.type === 'removed' ? '-' : ' '}
                     </span>
-                    {row.left.content}
+                    {highlightMatch(row.left.content)}
                   </>
                 )}
               </td>
@@ -238,7 +343,7 @@ const TextDiffViewer = ({
                     <span className='line-marker'>
                       {row.right.type === 'added' ? '+' : ' '}
                     </span>
-                    {row.right.content}
+                    {highlightMatch(row.right.content)}
                   </>
                 )}
               </td>

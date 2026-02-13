@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import DiffSummary from './DiffSummary';
 import DiffViewer from './DiffViewer';
 import TextDiffViewer from './TextDiffViewer';
-import { formatPath, safeValueString } from '../../../../utils/diffLogic';
+import { formatPath, safeValueString } from '../../utils/diffLogic';
 
 export default function DiffResults({
   rows,
@@ -12,14 +12,12 @@ export default function DiffResults({
   ignoreArrayOrder,
 }) {
   const [view, setView] = useState('split');
-  const [hideUnchanged, setHideUnchanged] = useState(false);
   const [filterTypes, setFilterTypes] = useState([
     'added',
     'removed',
     'changed',
-    'unchanged',
   ]);
-  const [pathSearch, setPathSearch] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const toggleFilter = (type) => {
     setFilterTypes((prev) =>
@@ -29,11 +27,10 @@ export default function DiffResults({
 
   const filteredRows = rows
     .filter((r) => {
-      if (hideUnchanged && r.type === 'unchanged') return false;
       if (!filterTypes.includes(r.type)) return false;
       if (
-        pathSearch &&
-        !formatPath(r.path).toLowerCase().includes(pathSearch.toLowerCase())
+        searchQuery &&
+        !formatPath(r.path).toLowerCase().includes(searchQuery.toLowerCase())
       )
         return false;
       return true;
@@ -83,51 +80,56 @@ export default function DiffResults({
       <div className='result-head'>
         <h2>Diff Stream</h2>
         <div className='result-tools'>
-          <label className='toggle-wrap'>
-            <input
-              type='checkbox'
-              checked={hideUnchanged}
-              onChange={(e) => setHideUnchanged(e.target.checked)}
-            />
-            Hide unchanged
-          </label>
-          <input
-            type='search'
-            placeholder='Filter by path…'
-            className='path-search'
-            value={pathSearch}
-            onChange={(e) => setPathSearch(e.target.value)}
-          />
-          <div
-            className='legend filter-legend'
-            role='group'
-            aria-label='Filter by status'
-          >
-            {['added', 'removed', 'changed', 'unchanged'].map((type) => (
-              <button
-                key={type}
-                type='button'
-                className={`chip filter-chip ${type} ${filterTypes.includes(type) ? 'active' : ''}`}
-                onClick={() => toggleFilter(type)}
+          {(view === 'table' || view === 'tree') && (
+            <>
+              <div
+                className='legend filter-legend'
+                role='group'
+                aria-label='Filter by status'
               >
-                {type.charAt(0).toUpperCase() + type.slice(1)}
-              </button>
-            ))}
-          </div>
-          <div className='view-actions'>
+                {['added', 'removed', 'changed', 'unchanged'].map((type) => (
+                  <button
+                    key={type}
+                    type='button'
+                    className={`chip filter-chip ${type} ${filterTypes.includes(type) ? 'active' : ''}`}
+                    onClick={() => toggleFilter(type)}
+                  >
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </button>
+                ))}
+              </div>
+
+              <div
+                className='separator'
+                style={{
+                  width: '1px',
+                  height: '24px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  margin: '0 0.2rem',
+                }}
+              />
+            </>
+          )}
+
+          <div
+            className='view-actions'
+            style={{ display: 'flex', gap: '0.6rem' }}
+          >
             <button
               type='button'
               onClick={copyDiff}
-              className='btn-ghost btn-sm'
+              className='tab-btn'
+              title='Copy diff to clipboard'
             >
-              Copy diff
+              COPY DIFF
             </button>
             <button
               type='button'
               onClick={generateExport}
-              className='btn-ghost btn-sm'
+              className='tab-btn'
+              title='Export diff as JSON'
             >
-              Export
+              EXPORT
             </button>
           </div>
         </div>
@@ -148,6 +150,20 @@ export default function DiffResults({
         ))}
       </div>
 
+      <div className='view-search-bar reveal reveal-5'>
+        <input
+          type='search'
+          placeholder={
+            view === 'split' || view === 'unified'
+              ? 'Search text in diff...'
+              : 'Filter by path...'
+          }
+          className='path-search full-width'
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
       <div className='diff-list' role='tabpanel'>
         {view === 'split' || view === 'unified' ? (
           <TextDiffViewer
@@ -155,6 +171,7 @@ export default function DiffResults({
             right={rightJson}
             mode={view}
             ignoreArrayOrder={ignoreArrayOrder}
+            searchQuery={searchQuery}
           />
         ) : (
           <DiffViewer rows={filteredRows} view={view} />

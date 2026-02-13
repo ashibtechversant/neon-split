@@ -1,17 +1,25 @@
 import { useState, useEffect, useCallback } from 'react';
-import { generateName } from '../../../utils/nameGenerator';
+import { generateName } from '../utils/nameGenerator';
 
-export function useHistory() {
+export function useHistory(storageKey = 'neon-split-history') {
   const [history, setHistory] = useState(() => {
-    const saved = localStorage.getItem('neon-split-history');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem(storageKey);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
   });
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [currentHistoryId, setCurrentHistoryId] = useState(null);
 
   useEffect(() => {
-    localStorage.setItem('neon-split-history', JSON.stringify(history));
-  }, [history]);
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(history));
+    } catch (e) {
+      console.warn('Failed to save history:', e);
+    }
+  }, [history, storageKey]);
 
   const addToHistory = useCallback((leftJson, rightJson, totals, parentId) => {
     let resultId = null;

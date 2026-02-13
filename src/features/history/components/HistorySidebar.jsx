@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import './HistorySidebar.css';
+import { createPortal } from 'react-dom';
+import '../styles/HistorySidebar.css';
 
 export default function HistorySidebar({
   isOpen,
@@ -10,6 +11,7 @@ export default function HistorySidebar({
   currentId,
   onToggleStar,
   onUpdateTags,
+  headerTitle = 'COMPARISON LOG',
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingTagsId, setEditingTagsId] = useState(null);
@@ -27,7 +29,7 @@ export default function HistorySidebar({
         (item) =>
           item.id.toLowerCase().includes(lower) ||
           item.leftJson.toLowerCase().includes(lower) ||
-          item.rightJson.toLowerCase().includes(lower) ||
+          (item.rightJson && item.rightJson.toLowerCase().includes(lower)) ||
           (item.note && item.note.toLowerCase().includes(lower)) ||
           (item.tags &&
             item.tags.some((tag) => tag.toLowerCase().includes(lower))),
@@ -73,7 +75,7 @@ export default function HistorySidebar({
     }
   };
 
-  return (
+  return createPortal(
     <>
       <div
         className={`history-overlay ${isOpen ? 'open' : ''}`}
@@ -81,7 +83,7 @@ export default function HistorySidebar({
       />
       <div className={`history-sidebar ${isOpen ? 'open' : ''}`}>
         <div className='history-header'>
-          <h2>COMPARISON LOG</h2>
+          <h2>{headerTitle}</h2>
           <button className='close-btn' onClick={onClose}>
             &times;
           </button>
@@ -105,6 +107,7 @@ export default function HistorySidebar({
             sortedHistory.map((item) => {
               const isActive = item.id === currentId;
               const isChild = item.parentId === currentId;
+              const isDiff = !!item.rightJson;
 
               return (
                 <div
@@ -132,25 +135,42 @@ export default function HistorySidebar({
                   </div>
 
                   <div className='history-preview'>
-                    <div className='preview-line'>
-                      <span className='label'>A:</span>
-                      <span className='code'>{getPreview(item.leftJson)}</span>
-                    </div>
-                    <div className='preview-line'>
-                      <span className='label'>B:</span>
-                      <span className='code'>{getPreview(item.rightJson)}</span>
-                    </div>
+                    {isDiff ? (
+                      <>
+                        <div className='preview-line'>
+                          <span className='label'>A:</span>
+                          <span className='code'>
+                            {getPreview(item.leftJson)}
+                          </span>
+                        </div>
+                        <div className='preview-line'>
+                          <span className='label'>B:</span>
+                          <span className='code'>
+                            {getPreview(item.rightJson)}
+                          </span>
+                        </div>
+                      </>
+                    ) : (
+                      <div className='preview-line'>
+                        <span className='label'>JSON:</span>
+                        <span className='code'>
+                          {getPreview(item.leftJson)}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
-                  <div className='history-stats'>
-                    <span className='stat added'>+ {item.totals.added}</span>
-                    <span className='stat removed'>
-                      - {item.totals.removed}
-                    </span>
-                    <span className='stat changed'>
-                      ~ {item.totals.changed}
-                    </span>
-                  </div>
+                  {isDiff && item.totals && (
+                    <div className='history-stats'>
+                      <span className='stat added'>+ {item.totals.added}</span>
+                      <span className='stat removed'>
+                        - {item.totals.removed}
+                      </span>
+                      <span className='stat changed'>
+                        ~ {item.totals.changed}
+                      </span>
+                    </div>
+                  )}
 
                   {/* Tags Section */}
                   <div className='history-tags-section'>
@@ -238,6 +258,7 @@ export default function HistorySidebar({
           </div>
         )}
       </div>
-    </>
+    </>,
+    document.body,
   );
 }

@@ -1,139 +1,24 @@
-import React, { useEffect, useCallback } from 'react';
-import { useDiff } from './features/diff/hooks/useDiff';
-import { useHistory } from './features/history/hooks/useHistory';
-import DiffInput from './features/diff/components/DiffInput';
-import DiffControls from './features/diff/components/DiffControls';
-import DiffResults from './features/diff/components/DiffResults';
-import HistorySidebar from './features/history/components/HistorySidebar';
-import { SAMPLE_A, SAMPLE_B } from './utils/diffLogic';
+import React, { useEffect } from 'react';
+import { DiffLayout } from '../features/diff';
+import { JsonViewerLayout } from '../features/json-viewer';
 import '../styles/globals.css';
 
 function App() {
-  const {
-    leftJson,
-    setLeftJson,
-    rightJson,
-    setRightJson,
-    diffRows,
-    totals,
-    status,
-    setStatus,
-    ignoreArrayOrder,
-    setIgnoreArrayOrder,
-    performCompare,
-    clear,
-  } = useDiff();
+  const [view, setView] = React.useState(() => {
+    try {
+      return localStorage.getItem('neon-split-view') || 'diff';
+    } catch {
+      return 'diff';
+    }
+  });
 
-  const {
-    history,
-    isHistoryOpen,
-    setIsHistoryOpen,
-    currentHistoryId,
-    setCurrentHistoryId,
-    addToHistory,
-    toggleStar,
-    updateTags,
-    clearHistory,
-  } = useHistory();
-
-  // Initial comparison with samples
   useEffect(() => {
-    const leftText = JSON.stringify(SAMPLE_A, null, 2);
-    const rightText = JSON.stringify(SAMPLE_B, null, 2);
-
-    setLeftJson(leftText);
-    setRightJson(rightText);
-
-    const initialTotals = performCompare(leftText, rightText, false);
-    if (initialTotals) {
-      addToHistory(leftText, rightText, initialTotals, null);
+    try {
+      localStorage.setItem('neon-split-view', view);
+    } catch (e) {
+      console.warn('Failed to save view preference:', e);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleCompareAction = useCallback(
-    (parentId = null) => {
-      const newTotals = performCompare(leftJson, rightJson, ignoreArrayOrder);
-
-      if (newTotals && (newTotals.total > 0 || (leftJson && rightJson))) {
-        const { id, duplicateFound } = addToHistory(
-          leftJson,
-          rightJson,
-          newTotals,
-          parentId || currentHistoryId,
-        );
-
-        setCurrentHistoryId(id);
-
-        if (duplicateFound) {
-          setStatus({
-            message: `Identical to existing log @${id}. Switched view.`,
-            tone: 'neutral',
-          });
-        }
-      }
-    },
-    [
-      leftJson,
-      rightJson,
-      ignoreArrayOrder,
-      currentHistoryId,
-      performCompare,
-      addToHistory,
-      setCurrentHistoryId,
-      setStatus,
-    ],
-  );
-
-  const handleRestoreHistory = useCallback(
-    (item) => {
-      setLeftJson(item.leftJson);
-      setRightJson(item.rightJson);
-      setCurrentHistoryId(item.id);
-      performCompare(item.leftJson, item.rightJson, ignoreArrayOrder);
-      setStatus({
-        message: `Restored comparison from history.`,
-        tone: 'neutral',
-      });
-      setIsHistoryOpen(false);
-    },
-    [
-      setLeftJson,
-      setRightJson,
-      setCurrentHistoryId,
-      performCompare,
-      ignoreArrayOrder,
-      setStatus,
-      setIsHistoryOpen,
-    ],
-  );
-
-  const handleSwap = useCallback(() => {
-    const temp = leftJson;
-    setLeftJson(rightJson);
-    setRightJson(temp);
-    setStatus({ message: 'Inputs swapped.', tone: 'neutral' });
-  }, [leftJson, rightJson, setLeftJson, setRightJson, setStatus]);
-
-  const handleLoadSample = useCallback(() => {
-    const leftText = JSON.stringify(SAMPLE_A, null, 2);
-    const rightText = JSON.stringify(SAMPLE_B, null, 2);
-    setLeftJson(leftText);
-    setRightJson(rightText);
-    setStatus({ message: 'Sample JSON loaded.', tone: 'neutral' });
-  }, [setLeftJson, setRightJson, setStatus]);
-
-  const getStatusBorderColor = () => {
-    switch (status.tone) {
-      case 'error':
-        return 'var(--c-removed)';
-      case 'success':
-        return 'var(--c-added)';
-      case 'neutral':
-      default:
-        return 'var(--c-unchanged)';
-    }
-  };
+  }, [view]);
 
   return (
     <div className='shell'>
@@ -144,63 +29,37 @@ function App() {
       <header className='hero reveal reveal-1'>
         <p className='eyebrow'>RETRO FUTURIST / MAXIMAL MODE</p>
         <h1>NEON SPLIT</h1>
+        <div
+          className='view-tabs'
+          style={{
+            display: 'flex',
+            gap: '1rem',
+            marginTop: '1.5rem',
+            justifyContent: 'center',
+          }}
+        >
+          <button
+            onClick={() => setView('diff')}
+            className={view === 'diff' ? 'btn-main' : 'btn-ghost'}
+          >
+            DIFF TOOL
+          </button>
+          <button
+            onClick={() => setView('explorer')}
+            className={view === 'explorer' ? 'btn-main' : 'btn-ghost'}
+          >
+            JSON EXPLORER
+          </button>
+        </div>
+        <p></p>
         <p className='subline'>
-          Compare two JSON payloads with cinematic clarity. Track adds, removes,
-          changes, and untouched values instantly.
+          {view === 'diff'
+            ? 'Compare two JSON payloads with cinematic clarity. Track adds, removes, changes, and untouched values instantly.'
+            : 'Explore complex JSON structures with a high-performance, collapsible tree viewer.'}
         </p>
       </header>
 
-      <section className='composer reveal reveal-2'>
-        <DiffInput
-          label='JSON A'
-          id='left-json'
-          value={leftJson}
-          onChange={setLeftJson}
-        />
-        <DiffInput
-          label='JSON B'
-          id='right-json'
-          value={rightJson}
-          onChange={setRightJson}
-        />
-      </section>
-
-      <DiffControls
-        onCompare={() => handleCompareAction()}
-        onSwap={handleSwap}
-        onLoadSample={handleLoadSample}
-        onClear={clear}
-        ignoreArrayOrder={ignoreArrayOrder}
-        setIgnoreArrayOrder={setIgnoreArrayOrder}
-        onToggleHistory={() => setIsHistoryOpen(true)}
-      />
-
-      <section
-        className='status reveal reveal-4'
-        aria-live='polite'
-        style={{ borderLeftColor: getStatusBorderColor() }}
-      >
-        <p id='status-text'>{status.message}</p>
-      </section>
-
-      <DiffResults
-        rows={diffRows}
-        totals={totals}
-        leftJson={leftJson}
-        rightJson={rightJson}
-        ignoreArrayOrder={ignoreArrayOrder}
-      />
-
-      <HistorySidebar
-        isOpen={isHistoryOpen}
-        onClose={() => setIsHistoryOpen(false)}
-        history={history}
-        onRestore={handleRestoreHistory}
-        onClear={clearHistory}
-        currentId={currentHistoryId}
-        onToggleStar={toggleStar}
-        onUpdateTags={updateTags}
-      />
+      {view === 'diff' ? <DiffLayout /> : <JsonViewerLayout />}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatPath, safeValueString } from '../../../../utils/diffLogic';
+import { formatPath, safeValueString } from '../../utils/diffLogic';
 
 const StatusChip = ({ type }) => (
   <span className={`table-chip ${type}`}>
