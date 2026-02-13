@@ -110,10 +110,7 @@ export default function JsonViewerLayout() {
         </div>
       </section>
 
-      <section
-        className='controls reveal reveal-3'
-        style={{ justifyContent: 'center', marginTop: '1.5rem', gap: '1.2rem' }}
-      >
+      <section className='controls json-viewer-controls reveal reveal-3'>
         <input
           type='file'
           ref={fileInputRef}

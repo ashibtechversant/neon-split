@@ -16,12 +16,6 @@ export default function JsonInputPanel({
       onDragLeave={onDragLeave}
       onDragOver={onDragOver}
       onDrop={onDrop}
-      style={{
-        height: '100%',
-        overflow: 'hidden',
-        display: 'grid',
-        gridTemplateRows: 'auto 1fr',
-      }}
     >
       <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <FileText size={14} />
@@ -37,11 +31,6 @@ export default function JsonInputPanel({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         spellCheck='false'
-        style={{
-          resize: 'none',
-          height: '100%',
-          minHeight: 0,
-        }}
       />
     </div>
   );

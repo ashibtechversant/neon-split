@@ -283,11 +283,6 @@ const TextDiffViewer = ({
     return (
       <div className='text-diff-container unified'>
         <table className='diff-table text-diff-table'>
-          <colgroup>
-            <col width='40' />
-            <col width='40' />
-            <col />
-          </colgroup>
           <tbody>
             {unifiedRows.map((row, idx) => (
               <tr key={idx} className={`diff-line ${row.type}`}>
@@ -314,12 +309,6 @@ const TextDiffViewer = ({
   return (
     <div className='text-diff-container split'>
       <table className='diff-table text-diff-table split-view'>
-        <colgroup>
-          <col width='40' />
-          <col width='50%' />
-          <col width='40' />
-          <col width='50%' />
-        </colgroup>
         <tbody>
           {splitRows.map((row, idx) => (
             <tr key={idx} className='diff-line-split'>
