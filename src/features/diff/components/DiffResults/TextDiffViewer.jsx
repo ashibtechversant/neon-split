@@ -56,11 +56,17 @@ const TextDiffViewer = ({
     return Diff.diffLines(leftText, rightText);
   }, [leftText, rightText]);
 
+  const searchRegex = useMemo(() => {
+    const q = searchQuery.trim();
+    if (!q) return null;
+    return new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  }, [searchQuery]);
+
   const highlightMatch = useCallback(
     (text) => {
-      if (!searchQuery.trim()) return text;
-      const lowerQuery = searchQuery.toLowerCase();
-      const parts = text.split(new RegExp(`(${searchQuery})`, 'gi'));
+      if (!searchRegex) return text;
+      const lowerQuery = searchQuery.trim().toLowerCase();
+      const parts = text.split(searchRegex);
       return parts.map((part, i) =>
         part.toLowerCase() === lowerQuery ? (
           <mark key={i} className='search-highlight'>
@@ -71,7 +77,7 @@ const TextDiffViewer = ({
         ),
       );
     },
-    [searchQuery],
+    [searchRegex, searchQuery],
   );
 
   const unifiedRows = useMemo(() => {

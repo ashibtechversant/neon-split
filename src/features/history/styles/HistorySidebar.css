@@ -5,7 +5,7 @@
   bottom: 0;
   width: min(380px, 100vw);
   background: var(--glass);
-  backdrop-filter: blur(24px);
+  backdrop-filter: blur(12px);
   border-left: 1px solid var(--border);
   z-index: 100;
   transform: translateX(100%);
@@ -233,7 +233,7 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(2px);
+  backdrop-filter: none;
   z-index: 90;
   opacity: 0;
   pointer-events: none;
